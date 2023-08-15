@@ -55,3 +55,20 @@ export function postLogout(req, res){
     res.cookie("token", "", {expires: new Date(0)})
     return res.sendStatus(200)
 }
+
+export async function getProfile(req, res){
+    try {
+        const userFound = await UserModel.findById(req.user.id)
+        if(!userFound) return res.status(404).json({message: "User not found"})
+
+        return res.status(200).json({
+            id: userFound._id,
+            username: userFound.username,
+            email: userFound.email,
+            createdAt: userFound.createdAt,
+            updatedAt: userFound.updatedAt
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
