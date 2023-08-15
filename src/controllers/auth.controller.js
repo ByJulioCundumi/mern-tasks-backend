@@ -1,5 +1,7 @@
 import UserModel from "../models/user.js"
 import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken";
+import { SECRET_KEY } from "../config.js";
 
 export async function postRegister(req, res){
     const {username, email, password} = req.body;
@@ -10,13 +12,20 @@ export async function postRegister(req, res){
             password: await bcrypt.hash(password, 10)
         })
         const saved = await newUser.save()
-        res.json({
-            id: saved._id,
-            username: saved.username,
-            email: saved.email,
-            createdAt: saved.createdAt,
-            updatedAt: saved.updatedAt
+
+        jwt.sign({id: saved._id}, SECRET_KEY, {expiresIn: "1d"}, 
+        (err, token)=>{
+            if(err) console.log(err)
+            res.cookie("token", token)
+            res.json({
+                id: saved._id,
+                username: saved.username,
+                email: saved.email,
+                createdAt: saved.createdAt,
+                updatedAt: saved.updatedAt
+            })
         })
+
     } catch (error) {
         console.log(error)
     }
