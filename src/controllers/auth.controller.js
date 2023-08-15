@@ -50,3 +50,8 @@ export async function postLogin(req, res){
         console.log(error)
     }
 }
+
+export function postLogout(req, res){
+    res.cookie("token", "", {expires: new Date(0)})
+    return res.sendStatus(200)
+}
