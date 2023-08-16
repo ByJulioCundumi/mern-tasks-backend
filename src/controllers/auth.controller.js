@@ -47,7 +47,7 @@ export async function postLogin(req, res){
         (err, token)=>{
             if(err) console.log(err)
             res.cookie("token", token)
-            res.json({message:"Loged Successfully"})
+            res.json(found)
         })
     } catch (error) {
         console.log(error)
