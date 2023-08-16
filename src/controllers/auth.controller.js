@@ -6,6 +6,9 @@ import { SECRET_KEY } from "../config.js";
 export async function postRegister(req, res){
     const {username, email, password} = req.body;
     try {
+        const match = await UserModel.findOne({email: email})
+        if(match) return res.json({message: "This user already exist, try a new one"})
+
         const newUser = new UserModel({
             username,
             email,
