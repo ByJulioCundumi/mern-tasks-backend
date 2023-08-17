@@ -75,3 +75,28 @@ export async function getProfile(req, res){
         console.log(error)
     }
 }
+
+// verificar token al calgar la pagina
+export async function getVerifyToken(req, res){
+    const {token} = req.cookies;
+    if(!token) return res.status(401).json({message: "Unauthorized"})
+
+    jwt.verify(token, SECRET_KEY, async (err, user)=>{
+        if(err) return res.status(401).json({message: "Unauthorized"})
+
+        try {
+            const userFound = await UserModel.findById(user.id)
+            if(!userFound) return res.status(401).json({message: "Unauthorized"})
+
+            return res.json({
+                id: userFound._id,
+                username: userFound.username,
+                email: userFound.email,
+                createdAt: userFound.createdAt,
+                updatedAt: userFound.updatedAt
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
